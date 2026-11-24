@@ -1,0 +1,50 @@
+name: Rebuild Pages index
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+  workflow_dispatch: # manual "Run workflow" button
+  push:
+    branches: [main]
+    paths:
+      - scripts/build.py
+      - .github/workflows/build.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-index
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate index.html
+        env:
+          # PAGES_INDEX_TOKEN is a fine-grained PAT with read access to repo
+          # metadata, needed because the default GITHUB_TOKEN cannot list
+          # other repositories. Falls back to GITHUB_TOKEN, which will only
+          # ever see this repo.
+          GITHUB_TOKEN: ${{ secrets.PAGES_INDEX_TOKEN || github.token }}
+          OWNER: ${{ github.repository_owner }}
+        run: python scripts/build.py
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No change to index.html"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Rebuild Pages index"
+          git push

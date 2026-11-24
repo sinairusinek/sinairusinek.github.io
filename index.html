@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pages Shelf — sinairusinek</title>
+<meta name="description" content="Every public GitHub Pages site published by sinairusinek.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#fff; --ink:#1c1b18; --ink-soft:#5f5c54;
+  --rule:#e3dfd5; --accent:#8a5a2b; --accent-soft:#f1e7da; --dead:#a33a2a;
+  --font-display:"Space Grotesk",Georgia,serif;
+  --font-body:"Inter",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#171614; --surface:#201e1b; --ink:#f0ece4; --ink-soft:#a39d91;
+    --rule:#332f2a; --accent:#d9a46a; --accent-soft:#2c2520; --dead:#e08573;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);
+  font-size:16px;line-height:1.55;margin:0}
+.wrap{max-width:52rem;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:2.5rem 4rem}
+h1{font-family:var(--font-display);font-size:clamp(1.9rem,5vw,2.6rem);
+  font-weight:700;letter-spacing:-.02em;margin:0 0 .4rem;text-wrap:balance}
+header p{color:var(--ink-soft);margin:0;max-width:42rem}
+.owner{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 .6rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);
+  border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:.5rem;
+  align-items:center;padding-block:.75rem;margin-top:2rem}
+.bar input{flex:1 1 12rem;min-width:0;font:inherit;font-size:.95rem;
+  color:var(--ink);background:var(--surface);border:1px solid var(--rule);
+  border-radius:6px;padding:.45rem .6rem}
+.bar input:focus-visible,.chip:focus-visible,a:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.chip{font:inherit;font-size:.82rem;font-weight:500;color:var(--ink-soft);
+  background:transparent;border:1px solid var(--rule);border-radius:999px;
+  padding:.35rem .7rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent-soft);
+  border-color:var(--accent);color:var(--accent)}
+.count{font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft);
+  margin-left:auto;font-variant-numeric:tabular-nums}
+ul.list{list-style:none;margin:0;padding:0}
+.card{border-bottom:1px solid var(--rule);padding-block:1.1rem;display:grid;
+  grid-template-columns:1fr auto;gap:.2rem 1rem;align-items:baseline}
+.card h2{font-family:var(--font-display);font-size:1.08rem;font-weight:600;
+  margin:0;letter-spacing:-.01em;min-width:0}
+.card h2 a{color:var(--ink);text-decoration:none;
+  border-bottom:1px solid var(--accent)}
+.card h2 a:hover{color:var(--accent)}
+.meta{grid-column:1/-1;font-family:var(--font-mono);font-size:.76rem;
+  color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:.1rem .8rem;
+  align-items:center;min-width:0}
+.meta a{color:var(--ink-soft)}
+.url{grid-column:1/-1;font-family:var(--font-mono);font-size:.78rem;
+  word-break:break-all;min-width:0}
+.url a{color:var(--accent);text-decoration:none}
+.url a:hover{text-decoration:underline}
+.date{font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:.68rem;
+  letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--rule);
+  border-radius:3px;padding:.05rem .35rem}
+.tag.broken{color:var(--dead);border-color:var(--dead)}
+.card[hidden]{display:none!important}
+.empty{color:var(--ink-soft);padding-block:2rem;font-style:italic}
+footer{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--rule);
+  color:var(--ink-soft);font-size:.88rem}
+footer a.full{color:var(--accent);text-decoration:none;
+  border-bottom:1px solid var(--accent)}
+footer a.full:hover{background:var(--accent-soft)}
+footer code{font-family:var(--font-mono);font-size:.82rem;
+  background:var(--surface);border:1px solid var(--rule);border-radius:4px;
+  padding:.1rem .3rem;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="owner">github.com/sinairusinek</p>
+    <h1>Pages Shelf</h1>
+    <p>Every public GitHub Pages site published from this account. GitHub has no
+    view that lists these — the repository tab filters by language, type and
+    visibility, never by whether Pages is on — so this page is generated weekly
+    from the API.</p>
+  </header>
+
+  <div class="bar">
+    <input id="q" type="search" placeholder="Filter by name or title…" aria-label="Filter sites">
+    <button class="chip" id="f-broken" aria-pressed="false">Not responding</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  <ul class="list" id="list">
+  <li class="card" data-key="dybbuk dybbuk " data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/Dybbuk/">Dybbuk</a></h2>
+    <span class="date">2026-11-23</span>
+    <div class="url"><a href="https://sinairusinek.github.io/Dybbuk/">https://sinairusinek.github.io/Dybbuk/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/Dybbuk">Dybbuk</a>
+      
+      
+    </div>
+  </li>
+  <li class="card" data-key="hasidigital hasidic edition status " data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/Hasidigital/">Hasidic Edition Status</a></h2>
+    <span class="date">2026-11-23</span>
+    <div class="url"><a href="https://sinairusinek.github.io/Hasidigital/">https://sinairusinek.github.io/Hasidigital/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/Hasidigital">Hasidigital</a>
+      
+      
+    </div>
+  </li>
+  <li class="card" data-key="hospital-registers haifa government hospital registers, 1930–1948 digitization, datasette site, and kima settlement matching" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/Hospital-Registers/">Haifa Government Hospital Registers, 1930–1948</a></h2>
+    <span class="date">2026-11-03</span>
+    <div class="url"><a href="https://sinairusinek.github.io/Hospital-Registers/">https://sinairusinek.github.io/Hospital-Registers/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/Hospital-Registers">Hospital-Registers</a>
+      <span>Digitization, Datasette site, and Kima settlement matching</span>
+      
+    </div>
+  </li>
+  <li class="card" data-key="genizalibraries allony index classified genizah book lists classed by friedberg genizah project field" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/GenizaLibraries/">Allony Index Classified</a></h2>
+    <span class="date">2026-10-13</span>
+    <div class="url"><a href="https://sinairusinek.github.io/GenizaLibraries/">https://sinairusinek.github.io/GenizaLibraries/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/GenizaLibraries">GenizaLibraries</a>
+      <span>Genizah book lists classed by Friedberg Genizah Project field</span>
+      
+    </div>
+  </li>
+  <li class="card" data-key="polemicon הפולמיקון — הדגמות " data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/Polemicon/">הפולמיקון — הדגמות</a></h2>
+    <span class="date">2026-08-21</span>
+    <div class="url"><a href="https://sinairusinek.github.io/Polemicon/">https://sinairusinek.github.io/Polemicon/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/Polemicon">Polemicon</a>
+      
+      
+    </div>
+  </li>
+  <li class="card" data-key="pi-ai-tei between pi, ai and the tei — zigzag presentation zigzag presentation" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/pi-ai-tei/">Between PI, AI and the TEI — zigzag presentation</a></h2>
+    <span class="date">2026-07-12</span>
+    <div class="url"><a href="https://sinairusinek.github.io/pi-ai-tei/">https://sinairusinek.github.io/pi-ai-tei/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/pi-ai-tei">pi-ai-tei</a>
+      <span>Zigzag presentation</span>
+      
+    </div>
+  </li>
+  <li class="card" data-key="e-geret אגרת — סדנת טקסט, תיוג ותיעוד ai correspondence extractor from byp" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/E-GERET/">אגרת — סדנת טקסט, תיוג ותיעוד</a></h2>
+    <span class="date">2026-07-08</span>
+    <div class="url"><a href="https://sinairusinek.github.io/E-GERET/">https://sinairusinek.github.io/E-GERET/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/E-GERET">E-GERET</a>
+      <span>AI correspondence extractor from BYP</span>
+      
+    </div>
+  </li>
+  <li class="card" data-key="margins margins — bhb dashboard – margins — the corpus erc application: methods, dashboard, bhb data-model desiderata" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/Margins/">Margins — BHB Dashboard – Margins — The Corpus</a></h2>
+    <span class="date">2026-06-23</span>
+    <div class="url"><a href="https://sinairusinek.github.io/Margins/">https://sinairusinek.github.io/Margins/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/Margins">Margins</a>
+      <span>ERC application: methods, dashboard, BHB data-model desiderata</span>
+      
+    </div>
+  </li>
+  <li class="card" data-key="hrol hrol | towards a hebrew republic of letters towards a hebrew republic of letters" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/HROL/">HROL | Towards a Hebrew Republic of Letters</a></h2>
+    <span class="date">2022-09-11</span>
+    <div class="url"><a href="https://sinairusinek.github.io/HROL/">https://sinairusinek.github.io/HROL/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/HROL">HROL</a>
+      <span>Towards a Hebrew Republic of Letters</span>
+      
+    </div>
+  </li>
+  <li class="card" data-key="hameorer המעורר digital edition of the historic literary journal" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/HaMeorer/">המעורר</a></h2>
+    <span class="date">2021-08-30</span>
+    <div class="url"><a href="https://sinairusinek.github.io/HaMeorer/">https://sinairusinek.github.io/HaMeorer/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/HaMeorer">HaMeorer</a>
+      <span>Digital edition of the historic literary journal</span>
+      
+    </div>
+  </li>
+  <li class="card" data-key="hameorer.github.io hameorer.github.io " data-ok="false">
+    <h2><a href="https://sinairusinek.github.io/hameorer.github.io/">hameorer.github.io</a></h2>
+    <span class="date">2021-08-16</span>
+    <div class="url"><a href="https://sinairusinek.github.io/hameorer.github.io/">https://sinairusinek.github.io/hameorer.github.io/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/hameorer.github.io">hameorer.github.io</a>
+      
+      <span class="tag broken">404</span>
+    </div>
+  </li>
+  <li class="card" data-key="myceteicean my project ceteicean tei rendering experiment" data-ok="true">
+    <h2><a href="https://sinairusinek.github.io/myCeteicean/">My project</a></h2>
+    <span class="date">2019-09-17</span>
+    <div class="url"><a href="https://sinairusinek.github.io/myCeteicean/">https://sinairusinek.github.io/myCeteicean/</a></div>
+    <div class="meta">
+      <a href="https://github.com/sinairusinek/myCeteicean">myCeteicean</a>
+      <span>CETEIcean TEI rendering experiment</span>
+      
+    </div>
+  </li>
+  <li class="empty" id="empty" hidden>Nothing matches that filter.</li>
+  </ul>
+
+  <footer>
+    <p>11 of 12 sites answered when checked on 24 November 2026.</p>
+    <p>1 site did not answer with 200: <strong>hameorer.github.io</strong>.</p>
+    <p>Sites served from private repositories are deliberately omitted here:
+    anything this site serves is public, so listing them would make their URLs
+    discoverable. <a class="full" href="https://claude.ai/artifact/Pko8YYqMPVVkBH72WAqJa7">The full list, including
+    those</a> opens only for accounts it has been shared with.</p>
+    <p>To regenerate the complete list yourself, run
+    <code>gh api --paginate "/user/repos?per_page=100&amp;affiliation=owner" --jq '.[] | select(.has_pages) | .name'</code>.</p>
+  </footer>
+</div>
+<script>
+var list=document.getElementById("list"),q=document.getElementById("q"),
+    fb=document.getElementById("f-broken"),count=document.getElementById("count"),
+    empty=document.getElementById("empty"),
+    cards=[].slice.call(list.querySelectorAll(".card"));
+function apply(){
+  var term=q.value.trim().toLowerCase(),
+      onlyBroken=fb.getAttribute("aria-pressed")==="true",shown=0;
+  cards.forEach(function(c){
+    var hit=(!term||c.dataset.key.indexOf(term)>-1)
+      &&(!onlyBroken||c.dataset.ok==="false");
+    c.hidden=!hit; if(hit)shown++;
+  });
+  empty.hidden=shown>0;
+  count.textContent=shown+" of "+cards.length+" sites";
+}
+q.addEventListener("input",apply);
+fb.addEventListener("click",function(){
+  fb.setAttribute("aria-pressed",fb.getAttribute("aria-pressed")==="true"?"false":"true");
+  apply();
+});
+apply();
+</script>
+</body>
+</html>
