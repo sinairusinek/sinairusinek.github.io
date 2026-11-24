@@ -61,9 +61,22 @@ def api(path):
                 "X-GitHub-Api-Version": "2022-11-28",
             },
         )
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
-            body = json.load(r)
-            link = r.headers.get("Link", "")
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                body = json.load(r)
+                link = r.headers.get("Link", "")
+        except urllib.error.HTTPError as e:
+            if e.code in (401, 403):
+                sys.exit(
+                    f"\nGitHub refused the repo listing (HTTP {e.code}).\n\n"
+                    "The workflow's default GITHUB_TOKEN is scoped to this one\n"
+                    "repository, so it cannot list the account's other repos.\n"
+                    "Add a fine-grained PAT with Metadata: Read-only as the\n"
+                    "repository secret PAGES_INDEX_TOKEN. See README.md.\n\n"
+                    "If PAGES_INDEX_TOKEN is already set, it has most likely\n"
+                    "expired — fine-grained PATs do. Issue a new one.\n"
+                )
+            raise
         out.extend(body if isinstance(body, list) else [body])
         m = re.search(r'<([^>]+)>;\s*rel="next"', link)
         url = m.group(1) if m else None
